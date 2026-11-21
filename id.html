@@ -1,0 +1,410 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#101827">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JABIRI FLEET SOLUTION</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
+header{background:#102b46;color:white;padding:18px}
+header h2{margin:0}
+header p{margin:6px 0 0;color:#cbd5e1}
+nav{display:flex;gap:7px;overflow-x:auto;padding:10px;background:#fff;position:sticky;top:0;z-index:5}
+nav button{white-space:nowrap;border:0;background:#e2e8f0;padding:11px;border-radius:7px;font-weight:bold}
+nav button.active{background:#1261a0;color:white}
+main{padding:14px;max-width:1100px;margin:auto}
+section{display:none}
+section.active{display:block}
+.card{background:white;padding:15px;border-radius:10px;margin-bottom:14px;box-shadow:0 2px 7px #0001}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#fff;padding:15px;border-radius:9px}
+.stat strong{display:block;font-size:24px;color:#1261a0;margin-top:7px}
+input,select,textarea{width:100%;padding:13px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:7px;font-size:16px;background:white;color:#172033;pointer-events:auto;touch-action:manipulation}
+label{font-weight:bold;font-size:14px}
+textarea{min-height:75px}
+.action{background:#1261a0;color:white;border:0;padding:12px 16px;border-radius:7px;font-weight:bold;margin:3px;cursor:pointer}
+.danger{background:#c62828}
+.secondary{background:#475569}
+table{border-collapse:collapse;width:100%;min-width:650px}
+th,td{padding:10px;border:1px solid #e2e8f0;text-align:left;font-size:13px}
+th{background:#eaf1f8}
+.tablewrap{overflow-x:auto}
+.smallbtn{padding:7px;margin:2px;border:0;border-radius:5px;color:white;background:#1261a0}
+.smallbtn.delete{background:#c62828}
+h3{margin-top:0}
+.notice{background:#e0f2fe;padding:12px;border-radius:7px;font-size:14px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+<h2>JABIRI FLEET SOLUTION</h2>
+<p>Fleet, Transport & Logistics Management System</p>
+</header>
+
+<nav id="navigation">
+<button class="active" data-page="dashboard">Dashboard</button>
+<button data-page="vehicles">Vehicles</button>
+<button data-page="drivers">Drivers</button>
+<button data-page="locations">Vehicle Location</button>
+<button data-page="reports">Daily Reports</button>
+<button data-page="maintenance">Maintenance</button>
+<button data-page="trips">Trip Costs</button>
+<button data-page="email">Client Email</button>
+<button data-page="excel">Excel Management</button>
+</nav>
+
+<main>
+
+<section id="dashboard" class="active">
+<div class="card"><h3>Fleet Dashboard</h3>
+<p>Welcome to JABIRI FLEET SOLUTION.</p></div>
+<div class="stats">
+<div class="stat">Total Vehicles<strong id="vehicleCount">0</strong></div>
+<div class="stat">Total Drivers<strong id="driverCount">0</strong></div>
+<div class="stat">Locations<strong id="locationCount">0</strong></div>
+<div class="stat">Maintenance Records<strong id="maintenanceCount">0</strong></div>
+<div class="stat">Trip Records<strong id="tripCount">0</strong></div>
+<div class="stat">Total Trip Cost<strong id="tripTotal">0</strong></div>
+<div class="stat">Daily Reports<strong id="reportCount">0</strong></div>
+</div>
+</section>
+
+<section id="vehicles">
+<div class="card">
+<h3>Vehicle Management</h3>
+<form id="vehicleForm">
+<input type="hidden" id="vehicleId">
+<label>Vehicle Registration Number</label>
+<input id="vehicleReg" placeholder="e.g. T 123 ABC" required>
+<label>Vehicle Type</label>
+<select id="vehicleType"><option>Truck</option><option>Trailer</option><option>Bus</option><option>Pickup</option><option>Van</option><option>Other</option></select>
+<label>Make / Model</label><input id="vehicleModel" placeholder="Vehicle make and model">
+<label>Year</label><input id="vehicleYear" type="number" placeholder="Year">
+<label>Assigned Driver</label><input id="vehicleDriver" placeholder="Driver name">
+<label>Vehicle Status</label>
+<select id="vehicleStatus"><option>Available</option><option>On Trip</option><option>Under Maintenance</option><option>Out of Service</option></select>
+<button class="action" type="submit">Save Vehicle</button>
+<button class="action secondary" type="reset">Clear</button>
+</form></div>
+<div class="card"><h3>Vehicle Records</h3><input id="vehicleSearch" placeholder="Search vehicle..."><div id="vehicleTable" class="tablewrap"></div></div>
+</section>
+
+<section id="drivers">
+<div class="card"><h3>Driver Management</h3>
+<form id="driverForm">
+<input type="hidden" id="driverId">
+<label>Full Name</label><input id="driverName" required placeholder="Driver full name">
+<label>Phone Number</label><input id="driverPhone" placeholder="Phone number">
+<label>Driving Licence Number</label><input id="driverLicence" placeholder="Licence number">
+<label>Status</label><select id="driverStatus"><option>Active</option><option>Inactive</option><option>On Leave</option></select>
+<button class="action" type="submit">Save Driver</button><button class="action secondary" type="reset">Clear</button>
+</form></div>
+<div class="card"><h3>Driver Records</h3><div id="driverTable" class="tablewrap"></div></div>
+</section>
+
+<section id="locations">
+<div class="card"><h3>Manual Vehicle Location</h3>
+<form id="locationForm">
+<label>Vehicle Registration</label><input id="locationVehicle" required placeholder="Vehicle registration">
+<label>Current Location</label><input id="locationPlace" required placeholder="Enter location">
+<label>Date and Time</label><input id="locationDate" type="datetime-local" required>
+<label>Trip Status</label><select id="locationStatus"><option>In Transit</option><option>At Loading Point</option><option>At Destination</option><option>Parked</option><option>Delayed</option></select>
+<label>Remarks</label><textarea id="locationRemarks" placeholder="Additional information"></textarea>
+<button class="action" type="submit">Save Location</button>
+</form></div>
+<div class="card"><h3>Location Records</h3><div id="locationTable" class="tablewrap"></div></div>
+</section>
+
+<section id="reports">
+<div class="card"><h3>Daily Fleet Reports</h3>
+<form id="reportForm">
+<label>Date</label><input id="reportDate" type="date" required>
+<label>Vehicle Registration</label><input id="reportVehicle" placeholder="Vehicle registration">
+<label>Report Title</label><input id="reportTitle" required placeholder="Report title">
+<label>Report Details</label><textarea id="reportDetails" required placeholder="Write report details"></textarea>
+<button class="action" type="submit">Save Report</button>
+</form></div>
+<div class="card"><h3>Daily Reports Records</h3><div id="reportTable" class="tablewrap"></div></div>
+</section>
+
+<section id="maintenance">
+<div class="card"><h3>Vehicle Maintenance Cost</h3>
+<form id="maintenanceForm">
+<label>Vehicle Registration</label><input id="maintenanceVehicle" required>
+<label>Date</label><input id="maintenanceDate" type="date" required>
+<label>Maintenance Type</label><input id="maintenanceType" placeholder="Service, tyres, repair..." required>
+<label>Cost (TZS)</label><input id="maintenanceCost" type="number" min="0" required>
+<label>Supplier / Garage</label><input id="maintenanceSupplier">
+<label>Remarks</label><textarea id="maintenanceRemarks"></textarea>
+<button class="action" type="submit">Save Maintenance</button>
+</form></div>
+<div class="card"><h3>Maintenance Records</h3><div id="maintenanceTable" class="tablewrap"></div></div>
+</section>
+
+<section id="trips">
+<div class="card"><h3>Trip Cost Management</h3>
+<form id="tripForm">
+<label>Vehicle Registration</label><input id="tripVehicle" required>
+<label>Driver Name</label><input id="tripDriver">
+<label>Trip Date</label><input id="tripDate" type="date" required>
+<label>Origin</label><input id="tripOrigin" required>
+<label>Destination</label><input id="tripDestination" required>
+<label>Fuel Cost (TZS)</label><input id="tripFuel" type="number" min="0" value="0">
+<label>Other Cost (TZS)</label><input id="tripOther" type="number" min="0" value="0">
+<button class="action" type="submit">Save Trip Cost</button>
+</form></div>
+<div class="card"><h3>Trip Cost Records</h3><div id="tripTable" class="tablewrap"></div></div>
+</section>
+
+<section id="email">
+<div class="card"><h3>Client Email Reports</h3>
+<p>Fill in the details below. Your email application will open so you can review and send the report manually.</p>
+<form id="emailForm">
+<label>Client Email Address</label><input id="clientEmail" type="email" required placeholder="client@example.com">
+<label>Email Subject</label><input id="emailSubject" required value="Fleet Management Report">
+<label>Message</label><textarea id="emailMessage" required placeholder="Write your message"></textarea>
+<button class="action" type="submit">Open Email Application</button>
+</form></div>
+</section>
+
+<section id="excel">
+<div class="card"><h3>Excel Management</h3>
+<p class="notice">Export all fleet records into one Excel workbook with separate worksheets for each module.</p>
+<button class="action" id="exportExcel">Export All to Excel</button>
+<button class="action secondary" id="exportCSV">Export Vehicles to CSV</button>
+<hr>
+<h3>Backup & Restore</h3>
+<p>Download a backup of all system records or restore a previous backup.</p>
+<button class="action" id="backupBtn">Download System Backup</button>
+<label>Restore Backup File (JSON)</label>
+<input type="file" id="restoreFile" accept=".json,application/json">
+<div id="excelMessage" class="notice">Excel export requires an internet connection to load the Excel library.</div>
+</div>
+</section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const KEY = "jabiri_fleet_solution_v1";
+const emptyData = {
+ vehicles:[], drivers:[], locations:[], reports:[],
+ maintenance:[], trips:[]
+};
+let data;
+try {
+ data = JSON.parse(localStorage.getItem(KEY)) || structuredClone(emptyData);
+} catch(e) {
+ data = JSON.parse(JSON.stringify(emptyData));
+}
+function saveData(){
+ localStorage.setItem(KEY,JSON.stringify(data));
+ renderAll();
+}
+function esc(value){
+ return String(value ?? "").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+function money(n){
+ return Number(n||0).toLocaleString("en-US");
+}
+function showPage(id){
+ document.querySelectorAll("main section").forEach(s=>s.classList.remove("active"));
+ document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelector(`[data-page="${id}"]`).classList.add("active");
+}
+document.getElementById("navigation").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-page]");
+ if(b) showPage(b.dataset.page);
+});
+function tableHTML(items,columns,type){
+ if(!items.length) return "<p>No records available.</p>";
+ let html="<table><thead><tr>";
+ columns.forEach(c=>html+="<th>"+esc(c.label)+"</th>");
+ html+="<th>Actions</th></tr></thead><tbody>";
+ items.forEach(item=>{
+  html+="<tr>";
+  columns.forEach(c=>html+="<td>"+esc(item[c.key])+"</td>");
+  html+=`<td><button class="smallbtn" data-edit="${type}" data-id="${item.id}">Edit</button><button class="smallbtn delete" data-delete="${type}" data-id="${item.id}">Delete</button></td>`;
+  html+="</tr>";
+ });
+ return html+"</tbody></table>";
+}
+const configs={
+ vehicles:{form:"vehicleForm",table:"vehicleTable",fields:{
+ reg:"vehicleReg",type:"vehicleType",model:"vehicleModel",year:"vehicleYear",driver:"vehicleDriver",status:"vehicleStatus"
+ },columns:[["reg","Registration"],["type","Type"],["model","Make/Model"],["year","Year"],["driver","Driver"],["status","Status"]]},
+ drivers:{form:"driverForm",table:"driverTable",fields:{
+ name:"driverName",phone:"driverPhone",licence:"driverLicence",status:"driverStatus"
+ },columns:[["name","Full Name"],["phone","Phone"],["licence","Licence"],["status","Status"]]},
+ locations:{form:"locationForm",table:"locationTable",fields:{
+ vehicle:"locationVehicle",place:"locationPlace",date:"locationDate",status:"locationStatus",remarks:"locationRemarks"
+ },columns:[["vehicle","Vehicle"],["place","Location"],["date","Date/Time"],["status","Status"],["remarks","Remarks"]]},
+ reports:{form:"reportForm",table:"reportTable",fields:{
+ date:"reportDate",vehicle:"reportVehicle",title:"reportTitle",details:"reportDetails"
+ },columns:[["date","Date"],["vehicle","Vehicle"],["title","Title"],["details","Details"]]},
+ maintenance:{form:"maintenanceForm",table:"maintenanceTable",fields:{
+ vehicle:"maintenanceVehicle",date:"maintenanceDate",type:"maintenanceType",cost:"maintenanceCost",supplier:"maintenanceSupplier",remarks:"maintenanceRemarks"
+ },columns:[["vehicle","Vehicle"],["date","Date"],["type","Type"],["cost","Cost"],["supplier","Supplier"],["remarks","Remarks"]]},
+ trips:{form:"tripForm",table:"tripTable",fields:{
+ vehicle:"tripVehicle",driver:"tripDriver",date:"tripDate",origin:"tripOrigin",destination:"tripDestination",fuel:"tripFuel",other:"tripOther"
+ },columns:[["vehicle","Vehicle"],["driver","Driver"],["date","Date"],["origin","Origin"],["destination","Destination"],["fuel","Fuel Cost"],["other","Other Cost"]]}
+};
+function render(type){
+ const c=configs[type];
+ const cols=c.columns.map(([key,label])=>({key,label}));
+ document.getElementById(c.table).innerHTML=tableHTML(data[type],cols,type);
+}
+function renderAll(){
+ Object.keys(configs).forEach(render);
+ document.getElementById("vehicleCount").textContent=data.vehicles.length;
+ document.getElementById("driverCount").textContent=data.drivers.length;
+ document.getElementById("locationCount").textContent=data.locations.length;
+ document.getElementById("maintenanceCount").textContent=data.maintenance.length;
+ document.getElementById("tripCount").textContent=data.trips.length;
+ document.getElementById("reportCount").textContent=data.reports.length;
+ const total=data.trips.reduce((sum,t)=>sum+Number(t.fuel||0)+Number(t.other||0),0);
+ document.getElementById("tripTotal").textContent="TZS "+money(total);
+}
+Object.entries(configs).forEach(([type,c])=>{
+ const form=document.getElementById(c.form);
+ form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const idField=form.querySelector('input[type="hidden"]');
+  const id=idField ? idField.value : "";
+  const record={id:id||String(Date.now())};
+  Object.entries(c.fields).forEach(([key,fieldId])=>{
+   record[key]=document.getElementById(fieldId).value.trim();
+  });
+  const index=data[type].findIndex(x=>x.id===record.id);
+  if(index>=0) data[type][index]=record;
+  else data[type].push(record);
+  saveData();
+  form.reset();
+  if(idField) idField.value="";
+  alert("Record saved successfully.");
+ });
+ form.addEventListener("reset",()=>{
+  const idField=form.querySelector('input[type="hidden"]');
+  if(idField) idField.value="";
+ });
+});
+document.addEventListener("click",e=>{
+ const edit=e.target.closest("[data-edit]");
+ const del=e.target.closest("[data-delete]");
+ if(edit){
+  const type=edit.dataset.edit;
+  const item=data[type].find(x=>x.id===edit.dataset.id);
+  if(!item)return;
+  const c=configs[type];
+  Object.entries(c.fields).forEach(([key,fieldId])=>{
+   document.getElementById(fieldId).value=item[key]??"";
+  });
+  const hidden=document.querySelector("#"+c.form+' input[type="hidden"]');
+  if(hidden)hidden.value=item.id;
+  showPage(type);
+  document.getElementById(c.form).scrollIntoView({behavior:"smooth"});
+ }
+ if(del){
+  const type=del.dataset.delete;
+  if(confirm("Are you sure you want to delete this record?")){
+   data[type]=data[type].filter(x=>x.id!==del.dataset.id);
+   saveData();
+  }
+ }
+});
+document.getElementById("vehicleSearch").addEventListener("input",e=>{
+ const q=e.target.value.toLowerCase();
+ const items=data.vehicles.filter(v=>
+  Object.values(v).some(x=>String(x).toLowerCase().includes(q))
+ );
+ const cols=configs.vehicles.columns.map(([key,label])=>({key,label}));
+ document.getElementById("vehicleTable").innerHTML=tableHTML(items,cols,"vehicles");
+});
+document.getElementById("emailForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const to=document.getElementById("clientEmail").value;
+ const subject=document.getElementById("emailSubject").value;
+ const body=document.getElementById("emailMessage").value;
+ location.href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+});
+document.getElementById("backupBtn").addEventListener("click",()=>{
+ downloadFile("jabiri_fleet_backup.json",JSON.stringify(data,null,2),"application/json");
+});
+function downloadFile(name,content,mime){
+ const blob=new Blob([content],{type:mime});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download=name;
+ document.body.appendChild(a);a.click();a.remove();
+ URL.revokeObjectURL(url);
+}
+document.getElementById("restoreFile").addEventListener("change",e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const restored=JSON.parse(reader.result);
+   Object.keys(emptyData).forEach(k=>{
+    if(!Array.isArray(restored[k]))throw new Error("Invalid backup");
+   });
+   if(confirm("Restore backup? Current records will be replaced.")){
+    data=restored;saveData();alert("Backup restored successfully.");
+   }
+  }catch(err){alert("Invalid backup file.");}
+ };
+ reader.readAsText(file);
+});
+document.getElementById("exportExcel").addEventListener("click",()=>{
+ if(typeof XLSX==="undefined"){
+  alert("Excel library could not load. Connect to the internet and try again.");
+  return;
+ }
+ const wb=XLSX.utils.book_new();
+ const sheets=[
+  ["Vehicles",data.vehicles],
+  ["Drivers",data.drivers],
+  ["Vehicle Locations",data.locations],
+  ["Daily Reports",data.reports],
+  ["Maintenance Costs",data.maintenance],
+  ["Trip Costs",data.trips]
+ ];
+ sheets.forEach(([name,records])=>{
+  const ws=XLSX.utils.json_to_sheet(records.length?records:[{Information:"No records available"}]);
+  XLSX.utils.book_append_sheet(wb,ws,name);
+ });
+ XLSX.writeFile(wb,"JABIRI_FLEET_SOLUTION.xlsx");
+});
+document.getElementById("exportCSV").addEventListener("click",()=>{
+ const records=data.vehicles;
+ if(!records.length){alert("No vehicle records to export.");return;}
+ const keys=Object.keys(records[0]);
+ const csv=[keys.join(","),...records.map(r=>keys.map(k=>'"'+String(r[k]??"").replace(/"/g,'""')+'"').join(","))].join("\n");
+ downloadFile("Jabiri_Vehicles.csv","\uFEFF"+csv,"text/csv;charset=utf-8");
+});
+renderAll();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("JABIRI FLEET PWA READY"))
+      .catch(error => console.error("PWA Error:", error));
+  });
+}
+</script>
+</body>
+</html>
